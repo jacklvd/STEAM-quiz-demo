@@ -1,0 +1,76 @@
+.quiz-container {
+    max-width: 650px;
+    min-width: 350px;
+    background: #d5bdaf;
+    border-radius: 8px;
+    margin-top: 20px;
+    padding: 30px 60px;
+    color: #14213d; 
+}
+
+.quiz-container .active-question {
+    font-size: 32px;
+    font-weight: 500;
+    color: #f5ebe0;
+}
+
+.quiz-container .total-questions {
+    font-size: 16px;
+    font-weight: 500;
+    color: #fec89a;
+}
+
+.quiz-container h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0;
+}
+  
+.quiz-container ul {
+    margin-top: 20px;
+    margin-left: -40px;
+}
+  
+.quiz-container ul li {
+    color: #003049;
+    font-size: 16px;
+    background: #ffffff;
+    border: 1px solid #eaeaea;
+    border-radius: 16px;
+    padding: 11px;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+.quiz-container ul .selected {
+    background: #f9dcc4;
+    border: 1px solid #ffb4a2;
+}
+
+.quiz-container button {
+    background: #6d6875;
+    border-radius: 9px;
+    font-size: 18px;
+    color: #ffffff;
+    padding: 10px 25px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    margin: 15px 20px;
+}
+
+.quiz-container .btn-home {
+    color: #fff;
+}
+
+.quiz-container .result-card {
+    background: #d5bdaf;
+    font-size: 20px;
+    color: #14213d; 
+}
+
+.quiz-container .result {
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+}
