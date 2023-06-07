@@ -10,7 +10,7 @@ function AddQuestion(props) {
   const addQuestionButtonPressed = () => {
     props.addQuestion({
       question: question,
-      choices: choices,
+      choices: choices.map(choice => choice.name),
       type: type,
       correctAns: correctAns,
     });
@@ -45,7 +45,8 @@ function AddQuestion(props) {
           placeholder="Choice"
           onChange={(e) => setChoice(e.target.value)}
         ></input>
-        <button className="btn btn-primary mt-3" onClick={() => {setChoices([...choices , {name: choice}])}}>Add</button>
+
+        <button className="btn btn-primary mt-3" type="button" onClick={() => {setChoices([...choices , {name: choice}])}}>Add</button>
         <ul>
           {choices.map(choice => (
             <li>{choice.name}</li>
@@ -69,6 +70,7 @@ function AddQuestion(props) {
           onChange={(e) => setCorrectAns(e.target.value)}
         ></input>
       </div>
+      
       <div className="row mt-3">
         <button
           type="button"

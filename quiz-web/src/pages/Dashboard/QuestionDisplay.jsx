@@ -1,14 +1,16 @@
 function QuestionDisplay({ Questions, deleteQuestion }) {
   const showQuestion = (Question) => {
     return (
-      <tr>
+      <tr key={Question.id}>
         <th scope="row">{Question.id}</th>
         <td>{Question.question}</td>
+        
         <td>
-          {Question.choices.map(choice => (
-            <li>{choice.name}</li>
+          {Question.choices.map((choice, index) => (
+            <li key={index}>{choice}</li>
           ))}
         </td>
+
         <td>{Question.type}</td>
         <td>{Question.correctAns}</td>
         <td>

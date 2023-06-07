@@ -6,7 +6,7 @@ const Dashboard = () => {
   const [data, setData] = useState({ items: [] });
 
   useEffect(() => {
-    fetch("http://localhost:3000/items")
+    fetch("http://localhost:5000/question", { method: "GET" })
       .then((response) => response.json())
       .then((data) => {
         setData({ items: data });
@@ -14,15 +14,15 @@ const Dashboard = () => {
   }, []);
 
 
-  const deleteItem = (item) => {
+  const deleteItem = (question) => {
     const items = data["items"];
     const requestOptions = {
       method: "DELETE",
     };
-    fetch(`http://localhost:3000/items/${item.id}`, requestOptions).then(
+    fetch(`http://localhost:5000/question/${question.id}`, requestOptions).then(
       (response) => {
         if (response.ok) {
-          const idx = items.indexOf(item);
+          const idx = items.indexOf(question);
           items.splice(idx, 1);
           setData({ items: items });
         }
@@ -40,11 +40,12 @@ const Dashboard = () => {
       },
       body: JSON.stringify(item),
     };
-    fetch("http://localhost:3000/items", requestOptions)
+    fetch("http://localhost:5000/question", requestOptions)
       .then((response) => response.json())
       .then((data) => {
-        items.push(data);
-        setData({ items: items }); //?
+        setData((prevData) => ({
+          items: [...prevData.items, data],
+        }));
       });
   };
 
