@@ -1,10 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import '../components/styles/quiz.scss'
 import { quiz } from '../data/questions'
 import { Link } from 'react-router-dom'
 
 const QuizCard = () => {
-
   const [activeQuestion, setActiveQuestion] = useState(0)
   const [answer, setAnswer] = useState('')
   const [showResults, setShowResults] = useState(false)
@@ -15,9 +14,26 @@ const QuizCard = () => {
     wrongAnswers: 0,
     correctAnswers: 0
   })
+  const [quizData, setQuizData] = useState({})
 
-  const { questions } = quiz
-  const { question, choices, correctAnswer } = questions[activeQuestion]
+  useEffect(() => {
+    fetchQuizData();
+  }, []);
+
+  const fetchQuizData = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/api/quiz');
+      const data = await response.json();
+
+      setQuizData(data);
+    } catch (error) {
+      console.error('Error fetching quiz data:', error);
+    }
+  };
+
+  const { questions } = quizData;
+  const activeQuestionData = questions && questions.length > activeQuestion ? questions[activeQuestion] : null;
+  const { question, choices, correctAnswer } = activeQuestionData || {};
 
   const onClickNext = () => {
     setAnswerIndex(null)
@@ -26,7 +42,7 @@ const QuizCard = () => {
       score: prev.score + quiz.perQuestionScore,
       correctAnswers: prev.correctAnswers + 1
     } : { ...prev, wrongAnswers: prev.wrongAnswers + 1 } ))
-    if (activeQuestion !== quiz.totalQuestions - 1) {
+    if (activeQuestion !== questions.length - 1) {
       setActiveQuestion((prev) => prev + 1)
     } else {
       setShowResults(true)
@@ -61,11 +77,11 @@ const QuizCard = () => {
         <>
         <div>
           <span className='active-question'>{addZeroPrefix(activeQuestion + 1)}</span>
-          <span className='total-questions'>/{addZeroPrefix(quiz.totalQuestions)}</span>
+          <span className='total-questions'>/{addZeroPrefix(quizData.totalQuestions)}</span>
         </div>
         <h2 className='question'>{question}</h2>
         <ul>
-          {choices.map((choice, index) => (
+          {choices && choices.map((choice, index) => (
             <li
               key={choice}
               className={`${answerIndex === index ? 'selected' : null}`}
@@ -85,7 +101,7 @@ const QuizCard = () => {
           <div className="result-card">
             <h3 className='result'>Result</h3>
             <p>
-              Total Question: <span>{questions.length}</span>
+              Total Question: <span>{questions ? questions.length : 0}</span>
             </p>
             <p>
               Total Score:<span> {result.score}</span>

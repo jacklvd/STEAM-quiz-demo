@@ -21,6 +21,7 @@ function AddQuestion(props) {
     setCorrectAns("");
   };
 
+
   return (
     <div className="container">
       <div className="row">
@@ -45,11 +46,20 @@ function AddQuestion(props) {
           placeholder="Choice"
           onChange={(e) => setChoice(e.target.value)}
         ></input>
-
-        <button className="btn btn-primary mt-3" type="button" onClick={() => {setChoices([...choices , {name: choice}])}}>Add</button>
+        <div>
+          <button className="btn btn-primary mt-3" type="button" onClick={() => {
+            setChoices([...choices , {name: choice}])
+          }}>Add</button>
+        </div>
+        <div>
+          <button className="btn btn-primary mt-3" type="button" onClick={() => {
+            setChoice("");
+            setChoices([]);
+          }}>Clear</button>
+        </div>
         <ul>
-          {choices.map(choice => (
-            <li>{choice.name}</li>
+          {choices.map((choice, index) => (
+            <li>Option {index + 1}: {choice.name}</li>
           ))}
         </ul>
 

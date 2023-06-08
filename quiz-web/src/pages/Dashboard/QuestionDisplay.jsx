@@ -6,9 +6,11 @@ function QuestionDisplay({ Questions, deleteQuestion }) {
         <td>{Question.question}</td>
         
         <td>
-          {Question.choices.map((choice, index) => (
-            <li key={index}>{choice}</li>
-          ))}
+          <ul class="list-group list-group-flush bg-transparent">
+            {Question.choices.map((choice, index) => (
+            <li class="list-group-item bg-transparent" key={index}>{choice}</li>
+            ))}
+          </ul>
         </td>
 
         <td>{Question.type}</td>

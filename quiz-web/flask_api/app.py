@@ -21,17 +21,6 @@ class QuestionModel(db.Model):
     def __repr__(self):
         return f"question={self.question}, type={self.type}, choices={self.choices}, correctAns={self.correctAns}"
 
-    def serialize(self):
-        choices = [choice.serialize() for choice in self.choices]
-        return {
-            'id': self.id,
-            'question': self.question,
-            'choices': choices,
-            'type': self.type,
-            'correctAns': self.correctAns
-        }
-
-
 
 class ChoiceModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -41,12 +30,6 @@ class ChoiceModel(db.Model):
     def __repr__(self):
         return f"name: {self.name}"
     
-    def serialize(self):
-        return {
-            'id': self.id,
-            'name': self.name
-        }
-
 
 with app.app_context():
     db.create_all()
@@ -73,6 +56,14 @@ class Question(Resource):
     def get(self, question_id=None):
         if question_id is None:
             questions = QuestionModel.query.all()
+            for i in range(len(questions)):
+                questions[i] = {
+                    'id': questions[i].id,
+                    'question': questions[i].question,
+                    'choices': [choice.name for choice in questions[i].choices],
+                    'type': questions[i].type,
+                    'correctAns': questions[i].correctAns
+                }
             return questions
         else:
             question = QuestionModel.query.get(question_id)
@@ -109,6 +100,27 @@ class Question(Resource):
         db.session.delete(question)
         db.session.commit()
         return '', 204
+    
+@app.route('/api/quiz')
+def get_quiz():
+    quiz_data = {
+        'totalQuestions': len(QuestionModel.query.all()),
+        'perQuestionScore': 1,
+        'questions': []
+    }
+
+    questions = QuestionModel.query.all()
+    for question in questions:
+        choices = [choice.name for choice in question.choices]
+        correct_answer = question.correctAns
+        quiz_data['questions'].append({
+            'question': question.question,
+            'choices': choices,
+            'type': question.type,
+            'correctAnswer': correct_answer
+        })
+
+    return jsonify(quiz_data)
 
 
 api.add_resource(Question, "/question", "/question/<int:question_id>")
