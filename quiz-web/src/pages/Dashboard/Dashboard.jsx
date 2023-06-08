@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import AddQuestion from "./AddQuestion";
 import QuestionDisplay from "./QuestionDisplay";
+import { Link } from 'react-router-dom'
 
 const Dashboard = () => {
   const [data, setData] = useState({ items: [] });
@@ -51,6 +52,10 @@ const Dashboard = () => {
 
   return (
     <div className="container">
+      <div>
+        <Link to='/'><button className='btn btn-primary' type="button">Home</button></Link>
+      </div>  
+
       <div className="row mt-3">
         <QuestionDisplay
           deleteQuestion={deleteItem}
