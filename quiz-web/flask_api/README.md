@@ -5,6 +5,7 @@
 
 ## Installation:
 
+Window
 ```Window
 python -m venv env
 env\Scripts\activate
@@ -13,6 +14,7 @@ python -m pip install -r requirements.txt
 flask run
 ```
 
+MacOS
 ```MacOS
 python3 -m venv env
 source env/bin/activate
