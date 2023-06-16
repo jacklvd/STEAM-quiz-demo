@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import '../components/styles/quiz.scss'
-import { quiz } from '../data/questions'
 import { Link } from 'react-router-dom'
+import * as tf from '@tensorflow/tfjs';
+import * as tmImage from '@teachablemachine/image';
 
 const QuizCard = () => {
   const [activeQuestion, setActiveQuestion] = useState(0)
@@ -16,8 +17,12 @@ const QuizCard = () => {
   })
   const [quizData, setQuizData] = useState({})
 
+  const webcamContainerRef = useRef(null);
+  const labelContainerRef = useRef(null);
+
   useEffect(() => {
     fetchQuizData();
+    init();
   }, []);
 
   const fetchQuizData = async () => {
@@ -31,6 +36,47 @@ const QuizCard = () => {
     }
   };
 
+  let model, webcam, labelContainer, maxPredictions;
+
+  const init = async () => {
+    const URL = 'https://teachablemachine.withgoogle.com/models/Wo0uHD6ov/';
+
+    const modelURL = URL + 'model.json';
+    const metadataURL = URL + 'metadata.json';
+
+    model = await tmImage.load(modelURL, metadataURL);
+    maxPredictions = model.getTotalClasses();
+
+    const flip = true;
+    webcam = new tmImage.Webcam(200, 200, flip);
+    await webcam.setup();
+    await webcam.play();
+    window.requestAnimationFrame(loop);
+
+    document.getElementById("webcam-container").appendChild(webcam.canvas);
+    labelContainer = document.getElementById('label-container');
+    for (let i = 0; i < maxPredictions; i++) {
+      const newDiv = document.createElement('div');
+      labelContainer.appendChild(newDiv);
+    }
+  };
+
+  const loop = async () => {
+    webcam.update();
+    await predict();
+    window.requestAnimationFrame(loop);
+  };
+
+  const predict = async () => {
+    const prediction = await model.predict(webcam.canvas);
+    for (let i = 0; i < maxPredictions; i++) {
+      const classPrediction =
+        prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
+      labelContainerRef.current.childNodes[i].innerHTML = classPrediction;
+    }
+  };
+  
+
   const { questions } = quizData;
   const activeQuestionData = questions && questions.length > activeQuestion ? questions[activeQuestion] : null;
   const { question, choices, correctAnswer } = activeQuestionData || {};
@@ -39,7 +85,7 @@ const QuizCard = () => {
     setAnswerIndex(null)
     setResult((prev) => ( answer ? { 
       ...prev,
-      score: prev.score + quiz.perQuestionScore,
+      score: prev.score + 1,
       correctAnswers: prev.correctAnswers + 1
     } : { ...prev, wrongAnswers: prev.wrongAnswers + 1 } ))
     if (activeQuestion !== questions.length - 1) {
@@ -92,9 +138,11 @@ const QuizCard = () => {
         </ul>
         <div className='button-flex'>
           <button className='btn' onClick={onClickNext} disabled={answerIndex === null}>{
-            activeQuestion === quiz.totalQuestions - 1 ? 'Finish' : 'Next'
+            activeQuestion === quizData.totalQuestions - 1 ? 'Finish' : 'Next'
           }</button>
-        </div>        
+        </div>
+        <div id='webcam-container' ref={webcamContainerRef}></div>
+        <div id='label-container' ref={labelContainerRef}></div>     
         </>
       ) : (
         <>
